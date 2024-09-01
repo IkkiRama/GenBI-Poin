@@ -14,12 +14,12 @@ return new class extends Migration
     {
         Schema::create('kegiatans', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->cascadeOnDelete();
+            $table->foreignId("user_id")->constrained("users")->cascadeOnDelete();
             $table->string('nama');
             $table->date('tanggal');
             $table->string('image_bukti');
             $table->text('resume')->nullable();
-            $table->string('link')->nullable();
+            $table->text('link')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

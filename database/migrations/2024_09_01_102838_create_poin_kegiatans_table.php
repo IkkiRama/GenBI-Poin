@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('poin_kegiatans', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Kegiatan::class)->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->cascadeOnDelete();
+            $table->foreignId("kegiatan_id")->constrained("kegiatans")->cascadeOnDelete();
             $table->enum('jenis', ['Responsibility', 'Kontribusi', 'Event', 'Kreativitas']);
             $table->integer('score');
             $table->timestamps();
