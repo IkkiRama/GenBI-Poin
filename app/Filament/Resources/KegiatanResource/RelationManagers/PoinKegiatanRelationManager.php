@@ -47,7 +47,7 @@ class PoinKegiatanRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('score'),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->headerActions( $poinKegiatan > 0 || Auth::user()->bidang === "medeks" ? [] : [
                 Tables\Actions\CreateAction::make(),
@@ -59,7 +59,17 @@ class PoinKegiatanRelationManager extends RelationManager
             ->bulkActions(Auth::user()->bidang === "medeks" ? [] : [
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
             ]);
     }
 }

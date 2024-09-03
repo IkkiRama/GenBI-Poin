@@ -7,15 +7,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PoinKegiatan extends Model
+class PenilaianDeputiOption extends Model
 {
     use HasFactory;
     use SoftDeletes;
     protected $guarded = ['id'];
 
-    public function kegiatan(): BelongsTo
+    public function penilaian_deputi_question(): BelongsTo
     {
-        return $this->belongsTo(Kegiatan::class);
+        return $this->belongsTo(PenilaianDeputiQuestion::class);
     }
-
 }

@@ -8,7 +8,9 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\JadwalAbsensi;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\JadwalAbsensiResource\Pages;
 use App\Filament\Resources\JadwalAbsensiResource\RelationManagers;
@@ -27,16 +29,29 @@ class JadwalAbsensiResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+            Auth::user()->bidang === "medeks" ? [
+                Forms\Components\TextInput::make('nama_kegiatan')
+                    ->readOnly(),
+                Forms\Components\TextInput::make('jumlah_poin')
+                    ->readOnly(),
+                Forms\Components\TextInput::make('start_time')
+                    ->readOnly(),
+                Forms\Components\TextInput::make('end_time')
+                    ->readOnly(),
+            ] : [
                 Forms\Components\TextInput::make('nama_kegiatan')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('jumlah_poin')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('durasi')
-                    ->required()
-                    ->numeric(),
+                DateTimePicker::make('start_time')
+                    ->label("Mulai")
+                    ->seconds(false),
+                DateTimePicker::make('end_time')
+                    ->label("Deadline")
+                    ->seconds(false)
             ]);
     }
 
@@ -49,8 +64,11 @@ class JadwalAbsensiResource extends Resource
                 Tables\Columns\TextColumn::make('jumlah_poin')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('durasi')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('start_time')
+                    ->label("Mulai")
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_time')
+                    ->label("Deadline")
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -66,15 +84,26 @@ class JadwalAbsensiResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
             ]);
     }
 

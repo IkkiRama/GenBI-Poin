@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jadwal_absensis', function (Blueprint $table) {
+        Schema::create('penilaian_deputi_options', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kegiatan');
-            $table->integer('jumlah_poin');
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->foreignId("penilaian_deputi_question_id")->constrained("penilaian_deputi_questions")->cascadeOnDelete();
+            $table->string('option');
+            $table->integer('score');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jadwal_absensis');
+        Schema::dropIfExists('penilaian_deputi_options');
     }
 };

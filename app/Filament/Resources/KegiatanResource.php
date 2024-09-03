@@ -14,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\Summarizers\Count;
 use App\Filament\Resources\KegiatanResource\Pages;
@@ -62,6 +63,7 @@ class KegiatanResource extends Resource
                     ->required(),
                 Forms\Components\FileUpload::make('image_bukti')
                     ->image()
+                    ->directory('foto_kegiatan')
                     ->required(),
                 Forms\Components\TextInput::make('link')
                     ->helperText('Masukan artikel yang anda publish'),
@@ -102,7 +104,7 @@ class KegiatanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions(Auth::user()->bidang === "medeks" ? [] : [
                 Tables\Actions\EditAction::make(),
@@ -111,7 +113,17 @@ class KegiatanResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
             ]);
     }
 
