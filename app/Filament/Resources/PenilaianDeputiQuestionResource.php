@@ -19,13 +19,20 @@ class PenilaianDeputiQuestionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Penilaian Deputi';
+
+    protected static ?string $navigationLabel = 'List Pertanyaan';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('question')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -72,8 +79,6 @@ class PenilaianDeputiQuestionResource extends Resource
     {
         return [
             'index' => Pages\ListPenilaianDeputiQuestions::route('/'),
-            'create' => Pages\CreatePenilaianDeputiQuestion::route('/create'),
-            'edit' => Pages\EditPenilaianDeputiQuestion::route('/{record}/edit'),
         ];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PackagePenilaianDeputiResource\RelationManagers;
+namespace App\Filament\Resources\PenilaianDeputiResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,7 +18,7 @@ class PenilaianDeputiAnswerRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('score')
+                Forms\Components\TextInput::make('penilaian_deputi_answers_options.core')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -27,9 +27,9 @@ class PenilaianDeputiAnswerRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('score')
+            ->recordTitleAttribute('penilaian_deputi_answers_options.core')
             ->columns([
-                Tables\Columns\TextColumn::make('score'),
+                Tables\Columns\TextColumn::make('penilaian_deputi_answers_options.core'),
             ])
             ->filters([
                 //

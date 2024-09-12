@@ -5,6 +5,7 @@ namespace App\Models;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,5 +17,10 @@ class PenilaianDeputiOption extends Model
     public function penilaian_deputi_question(): BelongsTo
     {
         return $this->belongsTo(PenilaianDeputiQuestion::class);
+    }
+
+    public function penilaian_deputi_answers_option(): HasMany
+    {
+        return $this->hasMany(PenilaianDeputiAnswersOption::class);
     }
 }

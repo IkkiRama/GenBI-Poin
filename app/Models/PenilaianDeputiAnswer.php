@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\PenilaianDeputi;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PenilaianDeputiAnswer extends Model
 {
@@ -18,9 +20,13 @@ class PenilaianDeputiAnswer extends Model
         return $this->belongsTo(User::class);
     }
 
-
-    public function package_penilaian_deputi(): BelongsTo
+    public function penilaian_deputi(): BelongsTo
     {
-        return $this->belongsTo(PackagePenilaianDeputi::class);
+        return $this->belongsTo(PenilaianDeputi::class);
+    }
+
+    public function penilaian_deputi_answers_option(): HasMany
+    {
+        return $this->hasMany(PenilaianDeputiAnswersOption::class);
     }
 }

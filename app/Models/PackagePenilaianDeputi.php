@@ -22,9 +22,4 @@ class PackagePenilaianDeputi extends Model
     {
         return $this->belongsTo(PenilaianDeputiQuestion::class);
     }
-
-    public function penilaian_deputi_answer(): BelongsTo
-    {
-        return $this->belongsTo(PenilaianDeputiAnswer::class);
-    }
 }

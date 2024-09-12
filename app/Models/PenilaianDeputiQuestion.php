@@ -19,4 +19,9 @@ class PenilaianDeputiQuestion extends Model
         return $this->hasMany(PenilaianDeputiOption::class);
     }
 
+    public function penilaian_deputi_answers_option(): HasMany
+    {
+        return $this->hasMany(PenilaianDeputiAnswersOption::class);
+    }
+
 }
