@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\PoinKegiatan;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,8 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Kegiatan extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes, HasRoles;
     protected $guarded = ['id'];
 
     public function user(): BelongsTo

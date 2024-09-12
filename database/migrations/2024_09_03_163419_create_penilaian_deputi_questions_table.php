@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('penilaian_deputi_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("penilaian_deputi_id")->constrained("penilaian_deputis")->cascadeOnDelete();
             $table->string('question');
             $table->timestamps();
             $table->softDeletes();

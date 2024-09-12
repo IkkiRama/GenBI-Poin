@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId("user_id")->constrained("users")->cascadeOnDelete();
             $table->foreignId("deputi_id")->constrained("users")->cascadeOnDelete();
-            $table->foreignId("penilaian_deputi_id")->constrained("penilaian_deputis")->cascadeOnDelete();
-            $table->foreignId("penilaian_deputi_question_id")->constrained("penilaian_deputi_questions")->cascadeOnDelete();
+            $table->foreignId("package_penilaian_deputi_id")->constrained("package_penilaian_deputis")->cascadeOnDelete();
             $table->string('option');
             $table->integer('score');
             $table->timestamps();
