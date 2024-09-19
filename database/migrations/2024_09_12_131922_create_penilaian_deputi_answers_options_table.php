@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId("pd_answer_id")->constrained("penilaian_deputi_answers")->cascadeOnDelete();
             $table->integer('score');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

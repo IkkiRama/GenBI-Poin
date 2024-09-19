@@ -2,16 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PenilaianDeputiQuestionResource\Pages;
-use App\Filament\Resources\PenilaianDeputiQuestionResource\RelationManagers;
-use App\Models\PenilaianDeputiQuestion;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use App\Models\PenilaianDeputiQuestion;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\PenilaianDeputiQuestionResource\Pages;
+use App\Filament\Resources\PenilaianDeputiQuestionResource\RelationManagers;
+use Filament\Forms\Components\TextInput;
 
 class PenilaianDeputiQuestionResource extends Resource
 {
@@ -33,6 +36,19 @@ class PenilaianDeputiQuestionResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
+                Repeater::make('members')
+                ->relationship("penilaian_deputi_option")
+                ->label("List Jawaban")
+                ->schema([
+                    TextInput::make("option")
+                    ->label("Jawaban")
+                    ->required(),
+                    TextInput::make("score")
+                    ->helperText('Isi score untuk jawaban. Misal 5/4/3/2/1')
+                    ->required()
+                ])
+                ->columns(1)
+                ->columnSpanFull()
             ]);
     }
 
@@ -60,6 +76,7 @@ class PenilaianDeputiQuestionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

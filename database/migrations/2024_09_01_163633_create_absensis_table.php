@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId("user_id")->constrained("users")->cascadeOnDelete();
             $table->foreignId("jadwal_absensi_id")->constrained("jadwal_absensis")->cascadeOnDelete();
-            $table->enum('status', ['Hadir', 'Tidak']);
+            $table->enum('status', ['Hadir', 'Izin','Tidak Hadir']);
             $table->boolean('is_true')->default(false);
             $table->string('image_bukti');
             $table->timestamps();

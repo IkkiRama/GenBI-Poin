@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('komsat')->default("");
-            $table->string('bidang')->default("");
+            $table->string('komsat')->nullable();
+            $table->string('bidang')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
