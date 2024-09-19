@@ -19,9 +19,4 @@ class Kegiatan extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function poin_kegiatan(): HasMany
-    {
-        return $this->hasMany(PoinKegiatan::class);
-    }
 }

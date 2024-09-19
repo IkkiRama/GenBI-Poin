@@ -85,6 +85,9 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('komsat')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->badge()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('bidang')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')

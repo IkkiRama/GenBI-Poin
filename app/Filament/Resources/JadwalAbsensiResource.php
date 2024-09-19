@@ -61,7 +61,7 @@ class JadwalAbsensiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(Auth::user()->hasRole("super_admin") ? [
                 Tables\Columns\TextColumn::make('nama_kegiatan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('jumlah_poin')
@@ -85,10 +85,22 @@ class JadwalAbsensiResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ] : [
+                Tables\Columns\TextColumn::make('nama_kegiatan')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('jumlah_poin')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('start_time')
+                    ->label("Mulai")
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_time')
+                    ->label("Deadline")
+                    ->sortable(),
             ])
-            ->filters([
+            ->filters(Auth::user()->hasRole("super_admin") ? [
                 Tables\Filters\TrashedFilter::make(),
-            ])
+            ]:[])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->label("Detail")

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('image_bukti');
             $table->text('resume')->nullable();
             $table->text('link')->nullable();
+            $table->enum('jenis', ['Responsibility', 'Kontribusi', 'Event', 'Kreativitas'])->nullable();
+            $table->integer('score')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
