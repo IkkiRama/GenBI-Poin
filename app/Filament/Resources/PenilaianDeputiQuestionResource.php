@@ -6,15 +6,17 @@ use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use App\Models\PenilaianDeputiQuestion;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\PenilaianDeputiQuestionResource\Pages;
 use App\Filament\Resources\PenilaianDeputiQuestionResource\RelationManagers;
-use Filament\Forms\Components\TextInput;
 
 class PenilaianDeputiQuestionResource extends Resource
 {
@@ -40,10 +42,10 @@ class PenilaianDeputiQuestionResource extends Resource
                 ->relationship("penilaian_deputi_option")
                 ->label("List Jawaban")
                 ->schema([
-                    TextInput::make("option")
+                TextInput::make("option_text")
                     ->label("Jawaban")
                     ->required(),
-                    TextInput::make("score")
+                TextInput::make("score")
                     ->helperText('Isi score untuk jawaban. Misal 5/4/3/2/1')
                     ->required()
                 ])
@@ -55,7 +57,10 @@ class PenilaianDeputiQuestionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(Auth::user()->getRoleNames()[0] !== "super_admin" ? [
+                Tables\Columns\TextColumn::make('question')
+                    ->searchable(),
+            ] : [
                 Tables\Columns\TextColumn::make('question')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -71,9 +76,9 @@ class PenilaianDeputiQuestionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->filters(Auth::user()->hasRole("super_admin") ? [
+                Tables\Filters\TrashedFilter::make(),
+            ]:[])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

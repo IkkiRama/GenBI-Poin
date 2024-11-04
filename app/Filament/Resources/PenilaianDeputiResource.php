@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\PenilaianDeputi;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use App\Filament\Resources\PenilaianDeputiResource\Pages;
@@ -40,15 +43,15 @@ class PenilaianDeputiResource extends Resource
                     ->required()
                     ->label("Waktu Selesai"),
                 Repeater::make('members')
-                ->relationship("package_penilaian_deputi")
-                ->label("List Pertanyaan")
-                ->schema([
-                    Select::make('penilaian_deputi_question_id')
-                        ->relationship("penilaian_deputi_question", "question")
-                        ->label("Pertanyaan")
-                        ->required()
-                        ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-                ])
+                    ->relationship("package_penilaian_deputi")
+                    ->label("List Pertanyaan")
+                    ->schema([
+                        Select::make('penilaian_deputi_question_id')
+                            ->relationship("penilaian_deputi_question", "question")
+                            ->label("Pertanyaan")
+                            ->required()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                    ])
                 ->columns(1)
                 ->columnSpanFull()
             ]);
@@ -57,7 +60,16 @@ class PenilaianDeputiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(Auth::user()->getRoleNames()[0] !== "super_admin" ? [
+                Tables\Columns\TextColumn::make('judul')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('start_time')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_time')
+                    ->dateTime()
+                    ->sortable(),
+            ]:[
                 Tables\Columns\TextColumn::make('judul')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('start_time')
@@ -79,10 +91,47 @@ class PenilaianDeputiResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
-            ->actions([
+            ->defaultSort('start_time', 'asc')  // Mengatur pengurutan default berdasarkan start_time
+            ->defaultSort('end_time', 'asc')
+            ->filters(Auth::user()->hasRole("super_admin") ? [
+                Tables\Filters\TrashedFilter::make(),
+            ]:[])
+            ->actions(Auth::user()->hasRole("member") ? [
+                Action::make("nilai")
+                    ->label(function (PenilaianDeputi $record) {
+                        $now = Carbon::now('Asia/Jakarta');
+                        $startTime = Carbon::parse($record->start_time, 'Asia/Jakarta');
+                        $endTime = Carbon::parse($record->end_time, 'Asia/Jakarta');
+
+                        // Jika waktu sekarang berada di antara start_time dan end_time, ubah label menjadi "Lihat Penilaian"
+                        if ($now->between($startTime, $endTime)) {
+                            return 'Nilai Sekarang';
+                        }
+
+                        return 'Lihat Penilaian';
+                    })
+                    ->url(fn (PenilaianDeputi $record): string => route("NilaiDeputi", $record))
+                    ->color(function (PenilaianDeputi $record) {
+                        $now = Carbon::now('Asia/Jakarta');
+                        $startTime = Carbon::parse($record->start_time, 'Asia/Jakarta');
+                        $endTime = Carbon::parse($record->end_time, 'Asia/Jakarta');
+
+                        // Jika waktu sekarang berada di antara start_time dan end_time, ubah warna menjadi success
+                        if ($now->between($startTime, $endTime)) {
+                            return 'info';
+                        }
+
+                        return 'success';
+                    })
+                    ->icon("heroicon-s-paper-airplane")
+                    ->visible(function (PenilaianDeputi $record) {
+                        $now = Carbon::now('Asia/Jakarta');
+                        $startTime = Carbon::parse($record->start_time, 'Asia/Jakarta');
+
+                        // Hanya tampilkan tombol jika waktu sekarang lebih besar atau sama dengan start_time
+                        return $now->greaterThanOrEqualTo($startTime);
+                    }),
+            ]: [
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -96,7 +145,6 @@ class PenilaianDeputiResource extends Resource
     public static function getRelations(): array
     {
         return [
-            PenilaianDeputiAnswerRelationManager::class
         ];
     }
 

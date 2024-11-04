@@ -8,8 +8,11 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
@@ -115,6 +118,28 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('Ubah Peran')
+                        ->icon("heroicon-m-check")
+                        ->requiresConfirmation()
+                        ->form([
+                            Forms\Components\Select::make('roles')
+                                ->label('Ubah Peran User')
+                                ->options(
+                                    Role::all()->pluck('name', 'id')->toArray() // Cek apakah opsinya sudah benar
+                                )
+                                ->multiple()
+                                ->preload()
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data) {
+                            foreach ($records as $record) {
+                                // Sync the roles for each selected user
+                                $record->roles()->sync($data['roles']);
+                            }
+                        }),
+                        // ->action(function (Collection $records) {
+                        //     return $records->each->update(['status' => 'accept']);
+                        // }),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),

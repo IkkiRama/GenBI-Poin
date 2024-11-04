@@ -98,6 +98,8 @@ class JadwalAbsensiResource extends Resource
                     ->label("Deadline")
                     ->sortable(),
             ])
+            ->defaultSort('start_time', 'desc')  // Mengatur pengurutan default berdasarkan start_time
+            ->defaultSort('end_time', 'desc')
             ->filters(Auth::user()->hasRole("super_admin") ? [
                 Tables\Filters\TrashedFilter::make(),
             ]:[])

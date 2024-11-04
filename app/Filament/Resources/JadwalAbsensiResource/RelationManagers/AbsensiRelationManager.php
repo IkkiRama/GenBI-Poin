@@ -63,7 +63,7 @@ class AbsensiRelationManager extends RelationManager
                     ->options([
                         'Hadir' => 'Hadir',
                         'Izin' => 'Izin',
-                        'Absen' => 'Absen',
+                        'Tidak Hadir' => 'Tidak Hadir',
                     ])
                     ->searchable(),
                 Toggle::make("is_true")
@@ -83,6 +83,7 @@ class AbsensiRelationManager extends RelationManager
                     ->label('Status')
                     ->options([
                         'Hadir' => 'Hadir',
+                        'Izin' => 'Izin',
                         'Tidak Hadir' => 'Tidak Hadir',
                     ])
                     ->searchable(),
@@ -125,13 +126,13 @@ class AbsensiRelationManager extends RelationManager
             ->headerActions(
                 //cek ketika user mempunyai role member maka hanya boleh submit 1 kali dan ketika bukan role nya dewa
                 // $jumlahAbsensi >= 1 && Auth::user()->hasRole('dewa') ? [] : [
-                $jumlahAbsensi >= 1 || Auth::user()->hasRole('bph')  ? [] : [
+                $jumlahAbsensi >= 1  ? [] : [
                 Tables\Actions\CreateAction::make()
                 ->disableCreateAnother()
                 ->visible(function () {
                     // $jadwal = $this->getOwnerRecord();
                     // Cek apakah user memiliki role super_admin
-                    if (Auth::user()->hasRole('super_admin')) {
+                    if (Auth::user()->hasRole('super_admin') || Auth::user()->hasRole('bph')) {
                         return true; // super_admin bebas memasukkan data kapanpun
                     }
 

@@ -20,6 +20,11 @@ class PenilaianDeputiAnswer extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function deputi()
+    {
+        return $this->belongsTo(User::class, 'deputi_id');
+    }
+
     public function penilaian_deputi(): BelongsTo
     {
         return $this->belongsTo(PenilaianDeputi::class);

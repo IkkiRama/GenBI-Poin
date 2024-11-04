@@ -77,16 +77,27 @@ class KegiatanResource extends Resource
                     ->readOnly(),
                 Forms\Components\DatePicker::make('tanggal')
                     ->readOnly(),
-                Forms\Components\FileUpload::make('image_bukti')
-                    ->deletable(false)
-                    ->openable(),
+                Select::make('jenis')
+                    ->label('Jenis Kegiatan')
+                    ->options([
+                        'Responsibility' => 'Responsibility',
+                        'Kontribusi' => 'Kontribusi',
+                        'Event' => 'Event',
+                        'Kreativitas' => 'Kreativitas',
+                    ])
+                    ->searchable(),
+                Forms\Components\TextInput::make('score')
+                    ->numeric(),
                 Forms\Components\TextInput::make('link')
                     ->readOnly()
                     ->helperText('Masukan artikel yang anda publish'),
                 Forms\Components\Textarea::make('resume')
                     ->readOnly()
-                    ->helperText('Tulis Resuman Singkat Kegiatan Webinar Yang Diikuti')
-                    ->columnSpanFull(),
+                    ->helperText('Tulis Resuman Singkat Kegiatan Webinar Yang Diikuti'),
+                Forms\Components\FileUpload::make('image_bukti')
+                    ->deletable(false)
+                    ->columnSpanFull()
+                    ->openable(),
                 ]);
         }else{
             return $form
@@ -133,7 +144,7 @@ class KegiatanResource extends Resource
                     $query->where('user_id', Auth::user()->id);
                 }
             })
-            ->columns(Auth::user()->hasRole("super_admin") || Auth::user()->hasRole("bph") ?
+            ->columns(Auth::user()->hasRole("super_admin") || Auth::user()->hasRole("deputi") ?
             [
                 TextColumn::make('nomer')
                     ->rowIndex(),
@@ -149,9 +160,11 @@ class KegiatanResource extends Resource
                 Tables\Columns\TextColumn::make('jenis')
                     ->badge()
                     ->label("Jenis Kegiatan")
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('score')
                     ->label("Poin Kegiatan")
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image_bukti')
                     ->label("Foto Bukti"),
@@ -189,10 +202,10 @@ class KegiatanResource extends Resource
             ->filters(Auth::user()->hasRole("super_admin") ? [
                 Tables\Filters\TrashedFilter::make(),
             ]:[])
-            ->actions(Auth::user()->bidang === "medeks" ? [] : [
+            ->actions(Auth::user()->hasRole("super_admin") || Auth::user()->hasRole('deputi') ? [
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-            ])
+            ] : [])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

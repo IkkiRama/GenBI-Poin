@@ -1,0 +1,43 @@
+
+        // // Get points data per deputy
+        // $pointsQuery = DB::table('penilaian_deputi_answers')
+        //     ->select('deputi_id', DB::raw('COALESCE(SUM(pd_options.score), 0) AS total_points'))
+        //     ->join('penilaian_deputi_answers_options AS pd_options', 'penilaian_deputi_answers.id', '=', 'pd_options.pd_answer_id')
+        //     ->groupBy('deputi_id');
+
+        // // Apply month filter if provided
+        // if ($month && is_numeric($month)) {
+        //     $pointsQuery->whereMonth('penilaian_deputi_answers.created_at', $month);
+        // }
+
+        // $points = $pointsQuery->get()->keyBy('deputi_id');
+
+        // // Get users with the "deputi" role
+        // $users = DB::table('users')
+        //     ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+        //     ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+        //     ->where('roles.name', 'deputi');
+
+        // // Apply komsat filter if provided
+        // if ($komsat && $komsat != 'Semua') {
+        //     $users->where('users.komsat', $komsat);
+        // }
+
+        // $users = $users->select('users.id', 'users.name', 'users.komsat', 'users.bidang')->get();
+
+        // // Prepare ranking data
+        // $ranking = [];
+
+        // foreach ($users as $user) {
+        //     $totalPoints = $points->get($user->id)->total_points ?? 0;  // Default to 0 if no points exist
+        //     $ranking[] = [
+        //         'user_id' => $user->id,
+        //         'name' => $user->name,
+        //         'komsat' => $user->komsat,
+        //         'bidang' => $user->bidang,
+        //         'total_points' => $totalPoints,
+        //     ];
+        // }
+
+        // // Sort ranking by total points in descending order
+        // $ranking = collect($ranking)->sortByDesc('total_points')->values();
